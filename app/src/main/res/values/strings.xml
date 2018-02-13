@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Elective Subject Selection</string>
+
+    <string name="title_activity_login_success">loginSuccessActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string-array name="Branch">
+        <item>CSE</item>
+        <item>IT</item>
+        <item>MECH</item>
+        <item>EEE</item>
+        <item>ECE</item>
+        <item>EIE</item>
+        <item>CIVIL</item>
+
+    </string-array>
+    <string-array name="year">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>

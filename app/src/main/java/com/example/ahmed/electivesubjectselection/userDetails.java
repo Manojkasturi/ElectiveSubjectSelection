@@ -7,11 +7,13 @@ package com.example.ahmed.electivesubjectselection;
 public class userDetails {
     public String userRoll;
     public String userEmail;
+    public String userName;
 
 
-    public userDetails(String userRoll, String userEmail) {
+    public userDetails(String userRoll, String userEmail,String userName) {
         this.userRoll = userRoll;
         this.userEmail = userEmail;
+        this.userName = userName;
     }
 }
 

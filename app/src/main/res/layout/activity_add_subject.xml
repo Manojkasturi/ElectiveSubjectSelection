@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.ahmed.electivesubjectselection.addSubjectActivity">
+
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="7dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="41dp"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:text="Add a subject to the database" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView11"
+        android:layout_alignRight="@+id/textView11"
+        android:layout_below="@+id/textView11"
+        android:layout_marginTop="65dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etsname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView11"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="42dp"
+            android:allowUndo="false"
+            android:ems="10"
+            android:hint="Subject Name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/etscode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/etsname"
+            android:layout_alignStart="@+id/etsname"
+            android:layout_below="@+id/etsname"
+            android:layout_marginTop="26dp"
+            android:ems="10"
+            android:hint="Subject Code"
+            android:inputType="textPersonName" />
+
+        <Spinner
+            android:id="@+id/spyear"
+            android:layout_width="212dp"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@+id/etscode"
+            android:layout_alignRight="@+id/etscode"
+            android:layout_below="@+id/etscode"
+            android:layout_marginTop="21dp" />
+
+        <Spinner
+            android:id="@+id/spsem"
+            android:layout_width="212dp"
+            android:layout_height="30dp"
+            android:layout_alignLeft="@+id/spyear"
+            android:layout_alignStart="@+id/spyear"
+            android:layout_below="@+id/spyear"
+            android:layout_marginTop="21dp" />
+
+        <Spinner
+            android:id="@+id/spbranch"
+            android:layout_width="212dp"
+            android:layout_height="30dp"
+            android:layout_alignLeft="@+id/spsem"
+            android:layout_alignStart="@+id/spsem"
+            android:layout_below="@+id/spsem"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="left"
+    android:layout_marginTop="190dp"
+
+    >
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView6"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_below="@+id/textView6"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15dp"
+        android:text="Subject Name :" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView12"
+        android:layout_alignRight="@+id/textView12"
+        android:layout_below="@+id/textView12"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="60dp"
+        android:textSize="15dp"
+        android:text="Subject Code :" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView13"
+        android:layout_alignStart="@+id/textView13"
+        android:layout_below="@+id/textView13"
+        android:layout_marginTop="38dp"
+        android:layout_marginLeft="15dp"
+        android:text="Year :" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignLeft="@+id/textView14"
+        android:layout_alignStart="@+id/textView14"
+        android:text="Semester"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/buttonadd"
+        android:layout_alignLeft="@+id/textView11"
+        android:layout_alignStart="@+id/textView11"
+ android:layout_marginTop="32dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="18dp"
+        android:text="Branch :" />
+
+</LinearLayout>
+    <Button
+        android:id="@+id/buttonadd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        android:hapticFeedbackEnabled="true"
+        android:text="Add" />
+
+
+</RelativeLayout>

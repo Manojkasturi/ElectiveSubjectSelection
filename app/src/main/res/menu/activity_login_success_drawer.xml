@@ -5,10 +5,13 @@
 
     <group android:checkableBehavior="single">
 
-
+        <item
+            android:id="@+id/nav_profile"
+            android:title="Profile Info"/>
         <item
             android:id="@+id/nav_logout"
             android:title="Logout" />
+
         <item
             android:id="@+id/nav_manage"
             android:title="Tools" />
@@ -24,6 +27,12 @@
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send your concern" />
+            <item
+                android:id="@+id/credits"
+                android:icon="@drawable/creditslogo"
+                android:title="Credits" />
+
+
         </menu>
     </item>
 

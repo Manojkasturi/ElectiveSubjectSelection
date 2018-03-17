@@ -1,5 +1,6 @@
 package com.example.ahmed.electivesubjectselection;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class registerActivity extends AppCompatActivity {
 
-    private EditText userRollNo,userEmail,userPassword;
+    private EditText userRollNo,userEmail,userPassword,userName;
     private Button regButton;
     private TextView goBack;
     private FirebaseAuth firebaseAuth;
-    String rollno,email,password;
+    String rollno,email,password,name;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class registerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(validateFeilds()){
                     //put the user data in database
+                    progressDialog.setMessage("Please wait....");
+                    progressDialog.show();
                     String user_email=userEmail.getText().toString().trim();
                     String user_password=userPassword.getText().toString().trim();
                     firebaseAuth.createUserWithEmailAndPassword(user_email,user_password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -52,14 +57,16 @@ public class registerActivity extends AppCompatActivity {
                                 sendEmailVerification();
                             }
                             else {
-                                Toast.makeText(registerActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(registerActivity.this, "Registration Failed ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(registerActivity.this, "or this email Id is already registered ", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                             }
                         }
                     });
                 }
             }
         });
-        goBack.setOnClickListener(new View.OnClickListener() {
+        goBack.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(registerActivity.this,loginActivity.class));
@@ -72,7 +79,8 @@ public class registerActivity extends AppCompatActivity {
         userPassword = (EditText)findViewById(R.id.etUserPassword);
         regButton = (Button)findViewById(R.id.registerButton);
         goBack = (TextView)findViewById(R.id.tvGoBack);
-
+        userName=(EditText)findViewById(R.id.etUserName);
+        progressDialog= new ProgressDialog(this);
     }
     
     private boolean validateFeilds(){
@@ -80,11 +88,14 @@ public class registerActivity extends AppCompatActivity {
         rollno = userRollNo.getText().toString();
         email = userEmail.getText().toString();
         password = userPassword.getText().toString();
+        name = userName.getText().toString();
 
-         if(rollno.isEmpty()){
-            userRollNo.setError("Please enter roll No");
+         if(rollno.isEmpty() || rollno.length()!=10){
+            userRollNo.setError("Please enter correct roll No");
             result= false;
         }
+
+
         else if(email.isEmpty()|| !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             userEmail.setError("Please Enter Valid Email");
             result= false;
@@ -93,6 +104,9 @@ public class registerActivity extends AppCompatActivity {
             userPassword.setError("Please set an Password");
             result= false;
         }
+        else if(name.isEmpty()){
+            userName.setError("Please Enter your Name");
+         }
         else {
             result = true;
         }
@@ -106,8 +120,9 @@ public class registerActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
+                        progressDialog.dismiss();
                         sendUserData();
-                        Toast.makeText(registerActivity.this,"Successfully Registered...Please Verify your Email...",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(registerActivity.this,"Successfully Registered...Please Verify your Email...",Toast.LENGTH_LONG).show();
                         firebaseAuth.signOut();
                         finish();
                         startActivity(new Intent(registerActivity.this,loginActivity.class));
@@ -122,7 +137,7 @@ public class registerActivity extends AppCompatActivity {
     private void sendUserData(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference myRef =firebaseDatabase.getReference(firebaseAuth.getUid());
-        userDetails userDetails = new userDetails(rollno,email);
+        userDetails userDetails = new userDetails(rollno,email,name);
         myRef.setValue(userDetails);
     }
 }

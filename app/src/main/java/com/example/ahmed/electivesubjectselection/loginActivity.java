@@ -1,7 +1,10 @@
 package com.example.ahmed.electivesubjectselection;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,19 +31,26 @@ public class loginActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private TextView forgotPassword,newUser;
-
-
+    FirebaseUser firebaseUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        firebaseAuth=FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+     
+        if(firebaseUser==null){
+            setContentView(R.layout.activity_login);
+        }
+        else{
+            finish();
+            startActivity(new Intent(loginActivity.this,loginSuccessActivity.class));
+        }
         setContentView(R.layout.activity_login);
-
         Email = (EditText)findViewById(R.id.etEmail);
         Password = (EditText)findViewById(R.id.etPassword);
         Login = (Button)findViewById(R.id.buttonLogin);
         newUser = (TextView)findViewById(R.id.tvRegister);
-        firebaseAuth=FirebaseAuth.getInstance();
+
         FirebaseUser user = firebaseAuth.getCurrentUser();
         progressDialog= new ProgressDialog(this);
         forgotPassword = (TextView)findViewById(R.id.tvForgotPassword);
@@ -52,7 +62,12 @@ public class loginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(checkFeild()) {
-                    validate(Email.getText().toString(), Password.getText().toString());
+                    if(Email.getText().toString().equals("admin@admin.com") && Password.getText().toString().equals("admin")){
+                        startActivity(new Intent(loginActivity.this,adminActivity.class));
+                        Toast.makeText(loginActivity.this,"Admin Logged In....",Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                        validate(Email.getText().toString().trim(), Password.getText().toString().trim());
                 }
             }
         });
@@ -69,6 +84,13 @@ public class loginActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean checkInternet() {
+        ConnectivityManager connectivityManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo !=null && networkInfo.isConnected();
+    }
+
     private void validate(String userName,String userPassword) {
         progressDialog.setMessage("Please Wait...");
         progressDialog.show();
@@ -85,7 +107,7 @@ public class loginActivity extends AppCompatActivity {
 
                     counter--;
 
-                    Toast.makeText(getBaseContext(),"Login Failed " +counter+ " Attempts remaining... or you may not be registered with us.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(),"Login Failed " +counter+ "  Attempts remaining... or you may not be registered with us.",Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                     if(counter==0){
                         Toast.makeText(loginActivity.this, "5 attempts Exceded", Toast.LENGTH_SHORT).show();
@@ -100,12 +122,15 @@ public class loginActivity extends AppCompatActivity {
         boolean flag = firebaseUser.isEmailVerified();
         if(flag){
             finish();
-            startActivity(new Intent(loginActivity.this,loginSuccessActivity.class));
+            Toast.makeText(this,"Login Successful",Toast.LENGTH_SHORT).show();
+            Intent i =new Intent(loginActivity.this,loginSuccessActivity.class);
+            startActivity(i);
             
         }
         else{
             Toast.makeText(this, "Verify your Email", Toast.LENGTH_LONG).show();
             firebaseAuth.signOut();
+
         }
     }
     private boolean checkFeild(){

@@ -5,7 +5,7 @@ package com.example.ahmed.electivesubjectselection;
  */
 
 public class MyConstants {
-    final static String url= "jdbc:mysql://192.168.1.2:3306/electiveSelection";
+    final static String url= "jdbc:mysql://192.168.1.9:3306/electiveSelection";
     final static String user ="root";
     final static String password = "";
     final static String classes = "com.mysql.jdbc.Driver";

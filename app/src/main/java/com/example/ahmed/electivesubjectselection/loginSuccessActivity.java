@@ -134,7 +134,7 @@ public class loginSuccessActivity extends AppCompatActivity
             br="EEE";
         } else if(str.equals("03")){
             branch.setText(branch.getText() +" "+"MECHANICAL");
-            br="MECH";
+            br="MECHANICAL";
         } else if(str.equals("04")){
             branch.setText(branch.getText() +" "+"ECE");
             br="ECE";

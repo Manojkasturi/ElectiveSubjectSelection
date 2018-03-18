@@ -61,7 +61,9 @@
         <activity android:name=".addSubjectActivity" />
         <activity android:name=".deleteActivity" />
         <activity android:name=".userPreferencesActivity" />
-        <activity android:name=".update"></activity>
+        <activity android:name=".update" />
+        <activity android:name=".OptionsCompletedActivity"
+            android:parentActivityName=".loginSuccessActivity"></activity>
     </application>
 
 </manifest>

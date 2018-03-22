@@ -50,7 +50,8 @@ public class addSubjectActivity extends AppCompatActivity {
         listYear.add("4");
 
         List<String> listsem = new ArrayList<>();
-        listsem.add("Select Semester");        listsem.add("1");
+        listsem.add("Select Semester");
+        listsem.add("1");
         listsem.add("2");
 
         List<String> listBranch = new ArrayList<>();
@@ -95,7 +96,6 @@ public class addSubjectActivity extends AppCompatActivity {
             }
         });
 
-
         ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listBranch);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sbranch.setAdapter(adapter2);
@@ -116,14 +116,12 @@ public class addSubjectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validate()) {
-
                     testDB();
                     Toast.makeText(addSubjectActivity.this, "Subject Added to the Database", Toast.LENGTH_SHORT).show();
 
                 }
             }
         });
-
     }
     private boolean validate() {
         boolean result = false;
@@ -143,18 +141,17 @@ public class addSubjectActivity extends AppCompatActivity {
     }
 
     private void testDB() {
-
+        Connection connection=null;
+        PreparedStatement preparedStatement=null;
         try {
             progressDialog.setTitle("Adding Subject");
-            progressDialog.setMessage("Adding "+sname+" in the database");
             progressDialog.show();
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             Class.forName(classes);
-            Connection con = DriverManager.getConnection(MyConstants.url, MyConstants.user, MyConstants.password);
-            Log.i("Connection :", con.toString());
-            String result = "Database connection success\n";
-           // Statement st = con.prepareStatement();
+            connection = DriverManager.getConnection(MyConstants.url, MyConstants.user, MyConstants.password);
+            Log.i("Connection :", connection.toString());
+
             String str = sbranch.getSelectedItem().toString();
             if(str.equals("CIVIL")){
                 tablename = "electives_civil";
@@ -177,14 +174,13 @@ public class addSubjectActivity extends AppCompatActivity {
             String c = scode.getText().toString();
             int courseid=Integer.parseInt(c);
             String coursename =sname.getText().toString();
-           // int  coursename =Integer.parseInt(cn);
             String y =syear.getSelectedItem().toString();
             int year = Integer.parseInt(y);
             String s =ssem.getSelectedItem().toString();
             int semester = Integer.parseInt(s);
-            PreparedStatement st = con.prepareStatement("INSERT INTO " +tablename+ " VALUES ("+courseid+",('"+coursename+"'),"+year+","+semester+");");
-            Log.i("Statement", st.toString());
-            st.executeUpdate();
+            preparedStatement = connection.prepareStatement("INSERT INTO " +tablename+ " VALUES ("+courseid+",('"+coursename+"'),"+year+","+semester+");");
+            Log.i("Statement", preparedStatement.toString());
+            preparedStatement.executeUpdate();
             startActivity(new Intent(addSubjectActivity.this,adminActivity.class));
             progressDialog.dismiss();
         }catch (SQLException sqle){
@@ -194,6 +190,14 @@ public class addSubjectActivity extends AppCompatActivity {
             } catch (ClassNotFoundException e) {
             e.printStackTrace();
             result1.setText(e.toString());
+        }
+        finally {
+            try {
+                preparedStatement.close();
+            } catch (Exception e) {}
+            try {
+                connection.close();
+            } catch (Exception e) {}
         }
     }
 }

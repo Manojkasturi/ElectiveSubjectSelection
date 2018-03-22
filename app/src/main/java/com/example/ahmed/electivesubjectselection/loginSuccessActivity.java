@@ -1,6 +1,8 @@
 package com.example.ahmed.electivesubjectselection;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Bundle;
@@ -35,7 +37,7 @@ import java.util.Date;
 public class loginSuccessActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ProgressDialog progressDialog;
-    private TextView tv,branch,year,sem;
+    private TextView tv,branch,year,sem,status;
     private FirebaseDatabase firebaseDatabase;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
@@ -43,7 +45,8 @@ public class loginSuccessActivity extends AppCompatActivity
     private DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference().child("");
     String uid,br;
     int y,s;
-    String user_roll;
+    String user_roll,options,rollNumber;
+    Boolean Status;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,7 @@ public class loginSuccessActivity extends AppCompatActivity
         progressDialog.setMessage("Fetching Data Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.show();
+        status =(TextView)findViewById(R.id.status);
         tv=(TextView)findViewById(R.id.roll_no_textview);
         branch =(TextView)findViewById(R.id.branch_textview);
         year=(TextView) findViewById(R.id.year_textview);
@@ -65,13 +69,21 @@ public class loginSuccessActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                user_roll = (String) dataSnapshot.child(uid).child("userRoll").getValue();
-                evaluateDataFromRollNo();
+                try {
 
+                    user_roll = (String) dataSnapshot.child(uid).child("userRoll").getValue();
+                    options = (String) dataSnapshot.child(uid).child("options").getValue();
+                    Log.i("TAG",user_roll+ " , "+ options);
+                    evaluateDataFromRollNo();
+                    checkStatus();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    Log.i("TAG",e.toString());
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
@@ -85,8 +97,10 @@ public class loginSuccessActivity extends AppCompatActivity
                     i.putExtra("branch", br);
                     i.putExtra("year", y);
                     i.putExtra("sem", s);
+                    i.putExtra("rollNumber",user_roll);
                     startActivityForResult(i, 1);
-                    Log.w("intentdetails", br + " " + y + " " + s);
+                    Log.w("passedintentdetails", rollNumber+" "+branch + " " + year + " " + sem);
+
                 }
             }
         });
@@ -100,6 +114,28 @@ public class loginSuccessActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+    }
+    private void checkStatus() {
+        if(options.equals("True")) {
+            status.setText(status.getText()+" "+"Preferences recorded ");
+            Status =true;
+            clickhere.setVisibility(View.INVISIBLE);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(loginSuccessActivity.this);
+            builder.setMessage("Preferences Recorded");
+            builder.setCancelable(false);
+            builder.setNegativeButton("OK!", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(loginSuccessActivity.this,OptionsCompletedActivity.class));
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }
+        else {
+            status.setText(status.getText()+" "+"Preferences not recorded ");
+        }
     }
 
     private void evaluateDataFromRollNo() {
@@ -123,7 +159,13 @@ public class loginSuccessActivity extends AppCompatActivity
         now = new Date();
         currYear = 1900+now.getYear();
         currYear = currYear- (2000+(a*10+b));
-        year.setText(year.getText()+" "+ currYear +" Year");
+       // year.setText(year.getText()+" "+ currYear +" Year");
+        if(currYear == 3){
+            year.setText(year.getText()+  " 3rd Year(Junior)");
+        }
+        else if(currYear == 4){
+            year.setText(year.getText()+ " 4th Year(Senior)");
+        }
         y=currYear;
         str = user_roll.substring(6,8);
         if(str.equals("01")){
@@ -146,7 +188,7 @@ public class loginSuccessActivity extends AppCompatActivity
             br="EIE";
         } else if(str.equals("12")){
             branch.setText(branch.getText() +" "+"IT");
-            br="CSEIT";
+            br="IT";
         }
         progressDialog.dismiss();
     }
@@ -185,9 +227,9 @@ public class loginSuccessActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       /* if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -196,41 +238,52 @@ public class loginSuccessActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+            int id = item.getItemId();
 
       if (id == R.id.nav_logout) {
-          FirebaseAuth.getInstance().signOut();
-          startActivity(new Intent(this,loginActivity.class));
-          Toast.makeText(loginSuccessActivity.this,"Logged Out",Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this,loginActivity.class));
+            Toast.makeText(loginSuccessActivity.this,"Logged Out",Toast.LENGTH_SHORT).show();
 
         }else if(id==R.id.nav_profile){
-          startActivity(new Intent(loginSuccessActivity.this,userDetailsActivity.class));
+            startActivity(new Intent(loginSuccessActivity.this,userDetailsActivity.class));
         }
         else if (id == R.id.nav_manage) {
             startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
         } else if (id == R.id.nav_share) {
-          Intent i1= new Intent(Intent.ACTION_SEND);
-          i1.setType("text/plain");
-          String shareBody="Share this app";
-          String sharesub ="Share using";
-          i1.putExtra(Intent.EXTRA_SUBJECT,shareBody);
-          i1.putExtra(Intent.EXTRA_TEXT,sharesub);
-          startActivity(Intent.createChooser(i1,"share using"));
+            Intent i1= new Intent(Intent.ACTION_SEND);
+            i1.setType("text/plain");
+            String shareBody="Share this app";
+            String sharesub ="Share using";
+            i1.putExtra(Intent.EXTRA_SUBJECT,shareBody);
+            i1.putExtra(Intent.EXTRA_TEXT,sharesub);
+            startActivity(Intent.createChooser(i1,"share using"));
         } else if (id == R.id.nav_send) {
-          Intent i = new Intent(Intent.ACTION_SEND);
-          i.setData(Uri.parse("mailto:"));
-          String[] to = {"kashifahmed38@gmail.com"};
-          i.putExtra(Intent.EXTRA_EMAIL,to);
-          i.putExtra(Intent.EXTRA_SUBJECT,"Suggestion");
-          i.setType("message/rfc822");
-          Intent.createChooser(i,"Send Email");
-          startActivity(i);
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setData(Uri.parse("mailto:"));
+            String[] to = {"kashifahmed38@gmail.com"};
+            i.putExtra(Intent.EXTRA_EMAIL,to);
+            i.putExtra(Intent.EXTRA_SUBJECT,"Suggestion");
+            i.setType("message/rfc822");
+            Intent.createChooser(i,"Send Email");
+            startActivity(i);
 
         }
-        else if(id==R.id.credits){
-          startActivity(new Intent(loginSuccessActivity.this,creditsActivity.class));
-      }
+        else if(id==R.id.nav_subjectdetails){
 
+          startActivity(new Intent(loginSuccessActivity.this,subjectDetailsActivity.class));
+        }
+        else if(id==R.id.credits){
+            startActivity(new Intent(loginSuccessActivity.this,creditsActivity.class));
+      }
+     /* else if(id==R.id.nav_pref){
+            Intent intent =new Intent(loginSuccessActivity.this,userPreferencesActivity.class);
+            intent.putExtra("rollNumber",user_roll);
+            intent.putExtra("branch", br);
+            intent.putExtra("options",options);
+            startActivity(intent);
+      }
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

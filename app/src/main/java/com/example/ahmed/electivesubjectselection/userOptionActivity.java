@@ -1,9 +1,12 @@
 package com.example.ahmed.electivesubjectselection;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,8 +26,9 @@ import java.util.Date;
 import java.util.List;
 
 interface ResultCallback{
-    void setResultSet(List<String> list);
+    void setResultSet(boolean error, List<String> list);
 }
+
 public class userOptionActivity extends AppCompatActivity implements ResultCallback, SubjectPrefCallback {
 
     private Spinner s1, s2, s3;
@@ -44,8 +48,8 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
         branch = getIntent().getStringExtra("branch");
         year = String.valueOf(getIntent().getIntExtra("year",3));
         sem = String.valueOf(getIntent().getIntExtra("sem",1));
-        //TODO get roll number from intent
-        rollNumber = "14B81A12B8";
+        rollNumber = getIntent().getStringExtra("rollNumber");
+        Log.w("passedintentdetails", rollNumber+" "+branch + " " + year + " " + sem);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching Data...");
@@ -56,7 +60,7 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
         s2 = (Spinner) findViewById(R.id.sppreference2);
         s3 = (Spinner) findViewById(R.id.sppreference3);
 
-        Log.i("ChakraChutiya","Inside Async Task");
+        Log.i("Chakra","Inside Async Task");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         try {
@@ -65,33 +69,10 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
             e.printStackTrace();
         }
 
-      /*  progressDialog= new ProgressDialog(this);
-        progressDialog.setMessage("Loading Please Wait....");
-        progressDialog.show();*/
-
         myModelClass = new MyModelClass(MyConstants.url, MyConstants.user, MyConstants.password,branch,year,sem);
         MyAsyncTask task = new MyAsyncTask();
         task.setCallback(this);
         task.execute(myModelClass);
-    }
-
-    @Override
-    public void setResultSet(List<String> list) {
-        list.add(0,MyConstants.SELECT_PREF);
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
-        /*final ArrayAdapter adapter2 = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
-        final ArrayAdapter adapter3 = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        */adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        s1.setAdapter(adapter);
-        s2.setAdapter(adapter);
-        s3.setAdapter(adapter);
-        progressDialog.dismiss();
-
-        //Same Item selection logic
-        setItemSelectionLogic(adapter);
     }
 
     private void setItemSelectionLogic(final ArrayAdapter adapter1) {
@@ -187,7 +168,7 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final UserOptionModel userOptionModel = new UserOptionModel(pref1Sub,pref2Sub,pref3Sub,branch);
+                final UserOptionModel userOptionModel = new UserOptionModel(pref1Sub,pref2Sub,pref3Sub,branch,rollNumber);
                 final InsertAsyncTask insertAsyncTask = new InsertAsyncTask();
                 insertAsyncTask.setCallback(activity);
                 insertAsyncTask.execute(userOptionModel);
@@ -201,42 +182,98 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
 
     @Override
     public void isPrefSubInserted(Boolean status) {
-        if (status)
-        Toast.makeText(getApplicationContext(),"Saved Successfully",Toast.LENGTH_LONG).show();
+        if (status) {
+            Toast.makeText(getApplicationContext(), "Saved Successfully", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(userOptionActivity.this,loginSuccessActivity.class));
+        }
         else
             Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_LONG).show();
     }
+
+    @Override
+    public void setResultSet(boolean error, List<String> list) {
+        if(error) {
+            new AlertDialog.Builder(s1.getContext())
+                    .setMessage("Error")
+                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            MyAsyncTask task = new MyAsyncTask();
+                            task.setCallback(userOptionActivity.this);
+                            task.execute(myModelClass);
+                        }
+                    }).setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+            return;
+        }
+
+        list.add(0,MyConstants.SELECT_PREF);
+        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        s1.setAdapter(adapter);
+        s2.setAdapter(adapter);
+        s3.setAdapter(adapter);
+        progressDialog.dismiss();
+
+        //Same Item selection logic
+        setItemSelectionLogic(adapter);
+    }
 }
 
-class MyAsyncTask extends AsyncTask<MyModelClass,Integer,ResultSet>{
+class MyAsyncTask extends AsyncTask<MyModelClass, Integer, ArrayList<String>>{
     private ResultCallback resultCallback;
+    private boolean error = false;
+
     void setCallback(ResultCallback resultCallback){
         this.resultCallback = resultCallback;
     }
 
     @Override
-    protected ResultSet doInBackground(MyModelClass... objects){
-        ResultSet resultSet = null;
+    protected ArrayList<String> doInBackground(MyModelClass... objects) {
+            ArrayList<String> list = new ArrayList<>();
+            Connection connection = null;
+            Statement statement = null;
+            ResultSet resultSet = null;
             try {
-                Connection con = DriverManager.getConnection(objects[0].url, objects[0].user, objects[0].password);
-                Statement st = con.createStatement();
+                connection = DriverManager.getConnection(objects[0].url, objects[0].user, objects[0].password);
+                statement = connection.createStatement();
                 String query ="select * from electives_"+objects[0].branch +" " + "WHERE"
                         +" " + "year = " + objects[0].year +" "+ "AND" + " " + "semester = "+objects[0].sem;
                 Log.i("FormedQuery",query);
-                resultSet = st.executeQuery(query);
-                return resultSet;
+                resultSet = statement.executeQuery(query);
+
+                while (resultSet.next()) {
+                    String name = resultSet.getString("courseName");
+                    list.add(name);
+                }
+            } catch (Exception e){
+                error = true;
+                Log.e("TAG","MyException",e);
+                Log.i("SQL",e.getMessage());
+            } finally {
+                try {
+                    resultSet.close();
+                } catch (Exception e) {}
+                try {
+                    statement.close();
+                } catch (Exception e) {}
+                try {
+                    connection.close();
+                } catch (Exception e) {}
             }
-            catch (Exception e){
-             Log.e("TAG","MyException",e);
-            }
-            Log.i("TAG","NULL VALUE RETURNED");
-        return resultSet;
+            return list;
     }
 
     @Override
-    protected void onPostExecute(final ResultSet o) {
-        super.onPostExecute(o);
-        getDatabaseData(o);
+    protected void onPostExecute(final ArrayList<String> result) {
+        resultCallback.setResultSet(error, result);
     }
 
     @Override
@@ -248,21 +285,8 @@ class MyAsyncTask extends AsyncTask<MyModelClass,Integer,ResultSet>{
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
     }
-
-    private void getDatabaseData(ResultSet resultSet){
-
-        ArrayList<String> list = new ArrayList<>();
-        try {
-            while (resultSet.next()){
-                String name = resultSet.getString("courseName");
-                list.add(name);
-            }
-            resultCallback.setResultSet(list);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }
+
 class MyModelClass {
     String url = "";
     String user = "";

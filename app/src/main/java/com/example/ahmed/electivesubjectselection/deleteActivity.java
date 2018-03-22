@@ -104,15 +104,17 @@ public class deleteActivity extends AppCompatActivity {
         });
     }
     public void deletesubject(View view) {
+        Connection connection=null;
+        Statement statement=null;
         try {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             Class.forName(classes);
-            Connection con = DriverManager.getConnection(MyConstants.url, MyConstants.user, MyConstants.password);
-            Log.i("Connection :", con.toString());
+            connection = DriverManager.getConnection(MyConstants.url, MyConstants.user, MyConstants.password);
+            Log.i("Connection :", connection.toString());
             String result = "Database connection success\n";
-            Statement st = con.createStatement();
-            Log.i("Statement", st.toString());
+            statement = connection.createStatement();
+            Log.i("Statement", statement.toString());
             String str = branch.getSelectedItem().toString();
             if (str.equals("CIVIL")) {
                 tablename = "electives_civil";
@@ -130,7 +132,7 @@ public class deleteActivity extends AppCompatActivity {
             String courseid =code.getText().toString();
             int cid = Integer.parseInt(courseid);
             Log.i("Query " , "DELETE FROM " +tablename+ " WHERE CourseID="+cid);
-            st.executeUpdate("DELETE FROM " +tablename+ " WHERE CourseID="+cid);
+            statement.executeUpdate("DELETE FROM " +tablename+ " WHERE CourseID="+cid);
             startActivity(new Intent(deleteActivity.this,adminActivity.class));
             Toast.makeText(this,"Deleted subject with id "+cid,Toast.LENGTH_SHORT).show();
         } catch (ClassNotFoundException e) {
@@ -138,6 +140,14 @@ public class deleteActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        finally {
+            try {
+                statement.close();
+            } catch (Exception e) {}
+            try {
+                connection.close();
+            } catch (Exception e) {}
         }
     }
 }

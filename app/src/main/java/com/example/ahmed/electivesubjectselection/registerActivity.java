@@ -24,6 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class registerActivity extends AppCompatActivity {
 
     private EditText userRollNo,userEmail,userPassword,userName;
@@ -89,8 +92,11 @@ public class registerActivity extends AppCompatActivity {
         email = userEmail.getText().toString();
         password = userPassword.getText().toString();
         name = userName.getText().toString();
-
-         if(rollno.isEmpty() || rollno.length()!=10){
+        String reg="[1-9]{2}(b|B)[8][1](a|A)[\\w]{4}";
+        Pattern p= Pattern.compile(reg);
+        Matcher m=p.matcher(rollno);
+        Boolean b=m.matches();
+         if(rollno.isEmpty() || rollno.length()!=10 || b==false){
             userRollNo.setError("Please enter correct roll No");
             result= false;
         }
@@ -137,7 +143,7 @@ public class registerActivity extends AppCompatActivity {
     private void sendUserData(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference myRef =firebaseDatabase.getReference(firebaseAuth.getUid());
-        userDetails userDetails = new userDetails(rollno,email,name);
+        userDetails userDetails = new userDetails(rollno,email,name,"False");
         myRef.setValue(userDetails);
     }
 }

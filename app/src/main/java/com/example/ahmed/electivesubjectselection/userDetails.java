@@ -8,12 +8,14 @@ public class userDetails {
     public String userRoll;
     public String userEmail;
     public String userName;
+    public String options;
 
 
-    public userDetails(String userRoll, String userEmail,String userName) {
+    public userDetails(String userRoll, String userEmail,String userName,String options) {
         this.userRoll = userRoll;
         this.userEmail = userEmail;
         this.userName = userName;
+        this.options=options;
     }
 }
 

@@ -15,6 +15,9 @@
         <item
             android:id="@+id/nav_manage"
             android:title="Tools" />
+        <item
+            android:id="@+id/nav_subjectdetails"
+            android:title="Subject Details"/>
     </group>
 
     <item android:title="Communicate">

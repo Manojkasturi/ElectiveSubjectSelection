@@ -8,8 +8,8 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="344dp"
-        android:layout_height="425dp"
+        android:layout_width="383dp"
+        android:layout_height="391dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -19,15 +19,17 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.923">
+        app:layout_constraintVertical_bias="0.949">
 
 
         <TextView
             android:id="@+id/result_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text=""
             android:textAlignment="center" />
+
     </ScrollView>
 
     <LinearLayout
@@ -49,17 +51,29 @@
             android:id="@+id/spinner4"
             android:layout_width="match_parent"
             android:layout_height="33dp" />
-
-
     </LinearLayout>
 
     <Button
         android:id="@+id/getResult"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="96dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="Get Result"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Number of students given their inputs :"
+        android:textSize="18dp"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

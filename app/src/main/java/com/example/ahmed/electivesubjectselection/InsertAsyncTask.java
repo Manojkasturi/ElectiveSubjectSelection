@@ -15,9 +15,11 @@ import com.mysql.jdbc.log.Log;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import static android.support.v4.content.ContextCompat.startActivity;
+//import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by Ahmed on 3/17/2018.
@@ -44,14 +46,16 @@ public class InsertAsyncTask extends AsyncTask<UserOptionModel,Integer,Boolean>{
         PreparedStatement preparedStatement1=null;
         PreparedStatement preparedStatement2= null;
         PreparedStatement preparedStatement3= null;
+        Statement statement= null;
+        ResultSet resultSet = null;
         try {
             connection = DriverManager.getConnection(model[0].url, model[0].user, model[0].password);
             String query = "INSERT INTO "+"useroptions_"+model[0].branch+" VALUES ('"+model[0].rollNumber+"'" +
                     ",'"+model[0].pref1+"','"+model[0].pref2+"'" +
                     ",'"+model[0].pref3+"','"+model[0].date+"','"+model[0].time+"' )" ;
-            //String query1 ="UPDATE results_"+model[0].branch+" SET count_pref1 = count_pref1 + 1 WHERE 'Subjects' =?";
             String query2 ="UPDATE results_"+model[0].branch+" SET count_pref2 = count_pref1 + 1 WHERE Subjects ='"+model[0].pref2+"'";
             String query3 ="UPDATE results_"+model[0].branch+" SET count_pref3 = count_pref1 + 1 WHERE Subjects ="+model[0].pref3;
+            String query4 ="select count_pref1";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement1 = connection.prepareStatement("UPDATE results_"+model[0].branch+" SET count_pref1 = count_pref1 + 1 WHERE Subjects =?");
             preparedStatement1.setString(1,model[0].pref1);
@@ -92,8 +96,8 @@ public class InsertAsyncTask extends AsyncTask<UserOptionModel,Integer,Boolean>{
         super.onPostExecute(aBoolean);
         subjectPrefCallback.isPrefSubInserted(true);
         changeUserData();
-
     }
+    
     private void changeUserData(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference myRef =firebaseDatabase.getReference(firebaseAuth.getUid());

@@ -49,6 +49,7 @@ public class userOptionActivity extends AppCompatActivity implements ResultCallb
         year = String.valueOf(getIntent().getIntExtra("year",3));
         sem = String.valueOf(getIntent().getIntExtra("sem",1));
         rollNumber = getIntent().getStringExtra("rollNumber");
+
         Log.w("passedintentdetails", rollNumber+" "+branch + " " + year + " " + sem);
 
         progressDialog = new ProgressDialog(this);

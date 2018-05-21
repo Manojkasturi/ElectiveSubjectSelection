@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -27,17 +29,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
-import java.time.Year;
 import java.util.Calendar;
 import java.util.Date;
 
 public class loginSuccessActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ProgressDialog progressDialog;
-    private TextView tv,branch,year,sem,status;
+    private TextView tv,branch,year,sem,status,name,usertextview;
     private FirebaseDatabase firebaseDatabase;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
@@ -45,22 +43,40 @@ public class loginSuccessActivity extends AppCompatActivity
     private DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference().child("");
     String uid,br;
     int y,s;
-    String user_roll,options,rollNumber;
+    String user_roll,options,rollNumber,user_name;
     Boolean Status;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_success);
+        final SwipeRefreshLayout swipeRefreshLayout= (SwipeRefreshLayout)findViewById(R.id.refresh);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark,android.R.color.holo_blue_light,android.R.color.holo_green_dark ,android.R.color.holo_orange_dark);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                        finish();
+                        startActivity(getIntent());
+                    }
+                },1500);
+            }
+        });
         clickhere = (Button)findViewById(R.id.button3);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching Data Please wait...");
         progressDialog.setCancelable(false);
         progressDialog.show();
         status =(TextView)findViewById(R.id.status);
+        name=(TextView)findViewById(R.id.name_textview);
         tv=(TextView)findViewById(R.id.roll_no_textview);
         branch =(TextView)findViewById(R.id.branch_textview);
         year=(TextView) findViewById(R.id.year_textview);
         sem = (TextView) findViewById(R.id.sem_textview);
+        usertextview=(TextView)findViewById(R.id.user_textview);
         user=FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -70,7 +86,7 @@ public class loginSuccessActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 try {
-
+                    user_name = (String) dataSnapshot.child(uid).child("userName").getValue();
                     user_roll = (String) dataSnapshot.child(uid).child("userRoll").getValue();
                     options = (String) dataSnapshot.child(uid).child("options").getValue();
                     Log.i("TAG",user_roll+ " , "+ options);
@@ -91,7 +107,9 @@ public class loginSuccessActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if(br == null || y == 0 || s == 0){
-                    Toast.makeText(getApplicationContext(),"Data Not Retrieved, Try Again..",Toast.LENGTH_SHORT).show();
+                    Toast toast=Toast.makeText(getApplicationContext(),"Data Not Retrieved, Try Again..",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP| Gravity.LEFT, 320, 40);
+                    toast.show();
                 }else {
                     Intent i = new Intent(loginSuccessActivity.this, userOptionActivity.class);
                     i.putExtra("branch", br);
@@ -144,6 +162,7 @@ public class loginSuccessActivity extends AppCompatActivity
         Date now;
         Calendar c = Calendar.getInstance();
         tv.setText(String.format(tv.getText() + " " + user_roll));
+
         char arr[]=user_roll.toCharArray();
 
         m=c.get(Calendar.MONTH)+1;
@@ -154,19 +173,8 @@ public class loginSuccessActivity extends AppCompatActivity
             sem.setText(sem.getText() + " " + "2nd Semester");
             s=2;
         }
-        a = Character.getNumericValue(arr[0]);
-        b = Character.getNumericValue(arr[1]);
-        now = new Date();
-        currYear = 1900+now.getYear();
-        currYear = currYear- (2000+(a*10+b));
-       // year.setText(year.getText()+" "+ currYear +" Year");
-        if(currYear == 3){
-            year.setText(year.getText()+  " 3rd Year(Junior)");
-        }
-        else if(currYear == 4){
-            year.setText(year.getText()+ " 4th Year(Senior)");
-        }
-        y=currYear;
+        name.setText(name.getText()+" "+user_name);
+       // usertextview.setText(user_name);
         str = user_roll.substring(6,8);
         if(str.equals("01")){
             branch.setText(branch.getText() + " " + "CIVIL");
@@ -190,6 +198,46 @@ public class loginSuccessActivity extends AppCompatActivity
             branch.setText(branch.getText() +" "+"IT");
             br="IT";
         }
+        a = Character.getNumericValue(arr[0]);
+        b = Character.getNumericValue(arr[1]);
+        now = new Date();
+        currYear = 1900+now.getYear();
+        currYear = currYear- (2000+(a*10+b));
+        if(currYear == 3){
+            year.setText(year.getText()+  " 3rd Year(Junior)");
+        }
+        else if(currYear == 4){
+            year.setText(year.getText()+ " 4th Year(Senior)");
+        }
+
+        else {
+            year.setText(year.getText()+ " ?");
+            progressDialog.dismiss();
+            if(options.equals("False")) {
+                new AlertDialog.Builder(this)
+                        .setMessage("You look like a year back Student")
+                        .setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(loginSuccessActivity.this, YeraBackStudentsActivity.class);
+                                intent.putExtra("branch", br);
+                                intent.putExtra("year", y);
+                                intent.putExtra("sem", s);
+                                intent.putExtra("rollNumber", user_roll);
+                                startActivity(intent);
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        clickhere.setVisibility(View.INVISIBLE);
+                        Toast toast =Toast.makeText(loginSuccessActivity.this,"Pull down to refresh",Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }).setCancelable(false)
+                        .show();
+            }
+        }
+        y=currYear;
         progressDialog.dismiss();
     }
 
@@ -241,9 +289,11 @@ public class loginSuccessActivity extends AppCompatActivity
             int id = item.getItemId();
 
       if (id == R.id.nav_logout) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this,loginActivity.class));
-            Toast.makeText(loginSuccessActivity.this,"Logged Out",Toast.LENGTH_SHORT).show();
+          FirebaseAuth.getInstance().signOut();
+          startActivity(new Intent(this,loginActivity.class));
+          Toast toast=Toast.makeText(loginSuccessActivity.this,"Logged Out",Toast.LENGTH_SHORT);
+          toast.setGravity(Gravity.TOP| Gravity.LEFT, 320, 40);
+          toast.show();
 
         }else if(id==R.id.nav_profile){
             startActivity(new Intent(loginSuccessActivity.this,userDetailsActivity.class));
@@ -270,20 +320,11 @@ public class loginSuccessActivity extends AppCompatActivity
 
         }
         else if(id==R.id.nav_subjectdetails){
-
           startActivity(new Intent(loginSuccessActivity.this,subjectDetailsActivity.class));
         }
         else if(id==R.id.credits){
             startActivity(new Intent(loginSuccessActivity.this,creditsActivity.class));
       }
-     /* else if(id==R.id.nav_pref){
-            Intent intent =new Intent(loginSuccessActivity.this,userPreferencesActivity.class);
-            intent.putExtra("rollNumber",user_roll);
-            intent.putExtra("branch", br);
-            intent.putExtra("options",options);
-            startActivity(intent);
-      }
-*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

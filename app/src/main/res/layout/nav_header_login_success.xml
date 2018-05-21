@@ -28,10 +28,10 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/user_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
-        android:text="from CVR College of Engineering"/>
+        android:text="CVR college of Engineering"/>
 
 </LinearLayout>

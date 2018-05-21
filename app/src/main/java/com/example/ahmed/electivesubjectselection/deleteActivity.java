@@ -38,19 +38,18 @@ public class deleteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete);
         code = (EditText) findViewById(R.id.deleteSubjectEditText);
-        year = (Spinner) findViewById(R.id.spdelyear);
         semester = (Spinner) findViewById(R.id.spdelsem);
         branch = (Spinner) findViewById(R.id.spdelbranch);
         delete = (Button) findViewById(R.id.delbutton);
         List<String> listYear = new ArrayList<>();
-        listYear.add("Select year");
+      /*  listYear.add("Select year");
         listYear.add("3");
         listYear.add("4");
 
         List<String> listsem = new ArrayList<>();
         listsem.add("Select Semester");
         listsem.add("1");
-        listsem.add("2");
+        listsem.add("2");*/
 
         List<String> listBranch = new ArrayList<>();
         listBranch.add("Select Branch");
@@ -62,7 +61,7 @@ public class deleteActivity extends AppCompatActivity {
         listBranch.add("IT");
         listBranch.add("EIE");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listYear);
+      /*    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listYear);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         year.setAdapter(adapter);
         year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -76,7 +75,7 @@ public class deleteActivity extends AppCompatActivity {
                 Toast.makeText(deleteActivity.this, "Please Fill all the Feilds", Toast.LENGTH_SHORT);
             }
         });
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listsem);
+      ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listsem);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         semester.setAdapter(adapter1);
         semester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -88,9 +87,9 @@ public class deleteActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
-        });
+        });*/
         ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listBranch);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         branch.setAdapter(adapter2);
         branch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

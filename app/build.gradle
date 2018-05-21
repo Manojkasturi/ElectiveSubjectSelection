@@ -37,5 +37,6 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.8.0'
     implementation files('libs/mysql-database-1.8.0.jar')
     implementation files('libs/mysql-connector-java-5.1.45-bin.jar')
+    compile 'com.github.msayan:tutorial-view:v1.0.6'
 }
 apply plugin: 'com.google.gms.google-services'

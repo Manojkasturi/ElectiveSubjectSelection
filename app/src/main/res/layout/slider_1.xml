@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@drawable/main_background">
+
+    <TextView
+        android:id="@+id/inst1_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instruction Number 1"
+        android:textColor="@android:color/holo_blue_light"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:layout_marginTop="100dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="3200dp"
+        android:layout_height="320dp"
+        android:layout_gravity="center"
+        android:src="@drawable/slider_1"
+        android:layout_marginTop="70dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Register yourself with your email address"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="30dp" />
+</LinearLayout>

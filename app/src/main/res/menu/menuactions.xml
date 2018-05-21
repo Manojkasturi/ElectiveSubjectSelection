@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Search / will display always -->
+    <item android:id="@+id/action_logout"
+        android:title="Logout"
+        />
+    <!-- Refresh -->
+    <item android:id="@+id/action_refresh"
+        android:title="Refresh"
+         />
+
+    <!-- Help -->
+    <item android:id="@+id/action_help"
+        android:title="Help"
+    />
+
+    <!-- Check updates -->
+    <item android:id="@+id/action_check_updates"
+        android:title="Check for updates"
+       />
+</menu>

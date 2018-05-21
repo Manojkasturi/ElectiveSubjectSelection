@@ -3,6 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
     <color name="black_overlay">#66000000</color>
+    <color name="refresh1">#FF0000</color>
+    <color name="refresh2">#00FFFF</color>
+    <color name="refresh3">#0000FF</color>
+    <color name="refresh4">#000000</color>
+
 </resources>

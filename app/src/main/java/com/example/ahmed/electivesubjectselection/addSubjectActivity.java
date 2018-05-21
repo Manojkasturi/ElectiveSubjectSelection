@@ -24,10 +24,10 @@ import java.util.List;
 
 public class addSubjectActivity extends AppCompatActivity {
     private TextView result1;
-    private EditText sname, scode;
+    private EditText sname, scode,desc;
     private Spinner syear, ssem, sbranch;
     private Button add;
-    private String valname, valcode, valyear, valsem, valbranch;
+    private String valname, valcode, valdesc, valsem, valbranch;
     String classes = "com.mysql.jdbc.Driver";
     String tablename;
     private ProgressDialog progressDialog;
@@ -43,6 +43,7 @@ public class addSubjectActivity extends AppCompatActivity {
         sbranch = (Spinner) findViewById(R.id.spbranch);
         add = (Button) findViewById(R.id.buttonadd);
         progressDialog = new ProgressDialog(this);
+        desc=(EditText)findViewById(R.id.etdesc);
 
         List<String> listYear = new ArrayList<>();
         listYear.add("Select year");
@@ -127,14 +128,16 @@ public class addSubjectActivity extends AppCompatActivity {
         boolean result = false;
         valname = sname.getText().toString();
         valcode = scode.getText().toString();
+        valdesc =desc.getText().toString();
 
         if (valname.isEmpty()) {
             sname.setError("Please Enter the name");
             result = false;
         } else if (valcode.isEmpty()) {
             scode.setError("Please Enter the Code ");
-
-        } else {
+        }else if (valdesc.isEmpty()) {
+            scode.setError("Please Enter the description of the subject");
+        }  else {
             result = true;
         }
         return result;
@@ -143,6 +146,7 @@ public class addSubjectActivity extends AppCompatActivity {
     private void testDB() {
         Connection connection=null;
         PreparedStatement preparedStatement=null;
+        PreparedStatement preparedStatement1=null;
         try {
             progressDialog.setTitle("Adding Subject");
             progressDialog.show();
@@ -178,9 +182,12 @@ public class addSubjectActivity extends AppCompatActivity {
             int year = Integer.parseInt(y);
             String s =ssem.getSelectedItem().toString();
             int semester = Integer.parseInt(s);
+            String description =desc.getText().toString();
             preparedStatement = connection.prepareStatement("INSERT INTO " +tablename+ " VALUES ("+courseid+",('"+coursename+"'),"+year+","+semester+");");
+            preparedStatement1=connection.prepareStatement("INSERT INTO subject_details VALUES('"+coursename+"','"+description+"');");
             Log.i("Statement", preparedStatement.toString());
             preparedStatement.executeUpdate();
+            preparedStatement1.executeUpdate();
             startActivity(new Intent(addSubjectActivity.this,adminActivity.class));
             progressDialog.dismiss();
         }catch (SQLException sqle){
@@ -194,6 +201,9 @@ public class addSubjectActivity extends AppCompatActivity {
         finally {
             try {
                 preparedStatement.close();
+            } catch (Exception e) {}
+            try {
+                preparedStatement1.close();
             } catch (Exception e) {}
             try {
                 connection.close();

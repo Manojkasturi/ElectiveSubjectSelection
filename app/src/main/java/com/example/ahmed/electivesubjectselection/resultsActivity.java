@@ -29,7 +29,7 @@ public class resultsActivity extends AppCompatActivity {
 
     private Spinner s1,s2,s3;
     private Button getresult;
-    private TextView ResultTV;
+    private TextView ResultTV,countTV;
     String tablename;
     private ProgressDialog progressDialog;
     @Override
@@ -40,6 +40,7 @@ public class resultsActivity extends AppCompatActivity {
         s3=(Spinner)findViewById(R.id.spinner4);
         getresult=(Button)findViewById(R.id.getResult);
         ResultTV =(TextView)findViewById(R.id.result_textview);
+        countTV =(TextView)findViewById(R.id.count);
 
         List<String> listBranch = new ArrayList<>();
         listBranch.add("--Select Branch--");
@@ -83,6 +84,9 @@ public class resultsActivity extends AppCompatActivity {
         ResultSet resultSet = null;
         ResultSetMetaData rsmd = null;
         Statement statement= null;
+        ResultSet resultSet1=null;
+        Statement statement1=null;
+        int count =0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -114,8 +118,11 @@ public class resultsActivity extends AppCompatActivity {
                 tablename = "useroptions_eie";
             }
             String sql ="SELECT * FROM "+tablename+";";
+            String sql1="SELECT COUNT(*) FROM "+tablename+";";
             statement =connection.createStatement();
-           resultSet= statement.executeQuery(sql);
+            statement1=connection.createStatement();
+            resultSet= statement.executeQuery(sql);
+            resultSet1=statement1.executeQuery(sql1);
             rsmd = resultSet.getMetaData();
             Log.i("Metadata",rsmd.toString());
             while(resultSet.next()){
@@ -126,6 +133,10 @@ public class resultsActivity extends AppCompatActivity {
                 result+=rsmd.getColumnName(5)+ ": " +resultSet.getString(5)+"\n\n\n";
             }
             ResultTV.setText(result);
+            while ((resultSet1.next())){
+                count = resultSet1.getInt(1);
+            }
+            countTV.setText(countTV.getText()+ " "+count);
             progressDialog.dismiss();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -138,11 +149,15 @@ public class resultsActivity extends AppCompatActivity {
                 resultSet.close();
             } catch (Exception e) {}
             try {
+                resultSet1.close();
+            } catch (Exception e) {}
+            try {
                 statement.close();
             } catch (Exception e) {}
             try {
                 connection.close();
             } catch (Exception e) {}
+
         }
     }
     }

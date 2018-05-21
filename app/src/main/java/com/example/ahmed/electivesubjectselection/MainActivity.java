@@ -1,22 +1,16 @@
 package com.example.ahmed.electivesubjectselection;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.WindowManager;
-import android.graphics.drawable.AnimationDrawable;
-import android.support.constraint.ConstraintLayout;
+import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
+import com.hololo.tutorial.library.TutorialActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends TutorialActivity {
     private static int SPLASH_TIME_OUT = 3500;
     Animation frombottom,fromtop;
     TextView tv;
@@ -25,13 +19,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            tv=(TextView)findViewById(R.id.textView3);
-            imageView = (ImageView)findViewById(R.id.imageView);
-            fromtop =AnimationUtils.loadAnimation(this,R.anim.fromtop);
-            frombottom= AnimationUtils.loadAnimation(this,R.anim.frombottom);
-            tv.setAnimation(frombottom);
-            imageView.setAnimation(fromtop);
+        setContentView(R.layout.activity_main);
+        tv=(TextView)findViewById(R.id.textView3);
+        imageView = (ImageView)findViewById(R.id.imageView);
+        fromtop =AnimationUtils.loadAnimation(this,R.anim.fromtop);
+        frombottom= AnimationUtils.loadAnimation(this,R.anim.frombottom);
+        tv.setAnimation(frombottom);
+        imageView.setAnimation(fromtop);
 
         new Handler().postDelayed(new Runnable() {
             /*
@@ -42,10 +36,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                startActivity(new Intent(MainActivity.this,loginActivity.class));
+                    startActivity(new Intent(MainActivity.this, OnBoardActivity.class));
+
                 // close this activity
                 finish();
             }
         }, SPLASH_TIME_OUT);
+
     }
 }
